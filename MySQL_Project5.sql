@@ -100,3 +100,72 @@ SELECT * FROM StudentDetails WHERE EnrollmentNo IS NOT NULL;
 
 /* 13.Write an SQL query for creating a new table with data and structure copied from another table. */
 CREATE TABLE StudentDetails_bk (SELECT * FROM StudentDetails);
+
+/* 14.Write an SQL query to fetch a joint record between two tables using intersect. */
+-- Note Intersect does not exist in MySQL
+
+DELETE FROM StudentDetails_bk WHERE (StudId = 21) OR (StudId = 31);
+
+SELECT * FROM StudentDetails WHERE StudId IN (SELECT StudId FROM StudentDetails_bk);
+
+/* 15.Write an SQL query for fetching records that are present in one table but not in another table using Minus. */
+-- Note Intersect does not exist in Minus
+
+SELECT * FROM StudentDetails s
+LEFT JOIN StudentDetails_bk b ON s.StudId = b.StudId
+WHERE b.StudId IS NULL;
+
+/* 16.Write an SQL query to fetch count of students project-wise sorted by project’s count in descending order. */
+
+SELECT Project, Count(*) AS StudentCount FROM StudentStipend GROUP BY Project ORDER BY StudentCount DESC;
+
+/* 17.Write an SQL query for creating an empty table with the same structure as some other table. */
+
+CREATE TABLE StudentStipend_bk LIKE StudentStipend;
+DESCRIBE StudentStipend;
+DESCRIBE StudentStipend_bk;
+SELECT * FROM StudentStipend_bk;
+
+/* 18.Write an SQL query for finding current date-time. */
+SELECT CURRENT_TIMESTAMP();
+
+/* 19.Write an SQL query for fetching only even rows from the table. */
+
+SET @row_number = 0;
+
+SELECT t.*
+FROM (SELECT *, (@row_number := @row_number + 1) AS Row_Num
+FROM StudentDetails) t
+WHERE (t.Row_Num % 2) = 0;
+
+/* 20.Write an SQL query for fetching all the Students details from StudentDetails table who joined in the Year 2018. */
+SELECT * FROM StudentDetails WHERE YEAR(DateOfJoining) = "2018";
+
+/* 21.Write the SQL query to find the nth highest stipend from the table. */
+SET @n = 3;
+
+PREPARE STMT FROM "SELECT * FROM StudentStipend ORDER BY Stipend DESC LIMIT ?, 1;";
+SET @v = @n - 1;
+EXECUTE STMT USING @v;
+
+/* 22.Write SQL query for fetching top n records using LIMIT? */
+SET @n = 2;
+SET @STMT = CONCAT("SELECT * FROM StudentStipend LIMIT ", @n);
+PREPARE STMT FROM @STMT;
+EXECUTE STMT;
+
+/* 23.Write a query for fetching only the first name(string before space) from the Name column of StudentDetails table. */
+SELECT SUBSTRING_INDEX(Name, ' ', 1) AS First_Name FROM StudentDetails;
+
+/* 24.Write an SQL query for fetching only odd rows from the table. */
+SET @row_number = 0;
+
+SELECT t.*
+FROM (SELECT *, (@row_number := @row_number + 1) AS Row_Num
+FROM StudentDetails) t
+WHERE (t.Row_Num % 2) != 0;
+
+/* 25. Write SQL query for finding the 3rd highest stipend from the table without using TOP/limit keyword. */
+SELECT * FROM
+(SELECT *, DENSE_RANK() OVER(ORDER BY Stipend DESC) Stipend_Rank FROM StudentStipend) Stipend_Ranked
+WHERE Stipend_Rank = 3;
