@@ -169,3 +169,20 @@ WHERE (t.Row_Num % 2) != 0;
 SELECT * FROM
 (SELECT *, DENSE_RANK() OVER(ORDER BY Stipend DESC) Stipend_Rank FROM StudentStipend) Stipend_Ranked
 WHERE Stipend_Rank = 3;
+
+
+/* Bonus : Try to create at least 3 bonus queries which contain 3 subqueries , can use Sakila database for that. */
+
+-- -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+SELECT * FROM sakila.address WHERE address_id NOT IN (SELECT address_id FROM sakila.customer);
+
+-- -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+SELECT * FROM sakila.actor WHERE actor_id NOT IN 
+(SELECT actor_id FROM sakila.film_actor WHERE film_id IN
+(SELECT film_id FROM sakila.film WHERE rating = "PG-13" AND special_features LIKE "%Behind the Scenes%"));
+
+-- -----------------------------------------------------------------------------------------------------------------------------------------------------
